@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "phase2_completed" boolean DEFAULT false NOT NULL;

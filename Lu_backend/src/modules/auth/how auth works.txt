@@ -1,0 +1,59 @@
+                +----------------+
+                |   Login API    |
+                +----------------+
+                        |
+                        v
+         +---------------------------+
+         | AuthController.loginX    |
+         | (Admin/Coach/Referee)    |
+         +---------------------------+
+                        |
+                        v
+             +------------------+
+             | AuthService      |
+             | loginUser()      |
+             |  - Check email   |
+             |  - Compare pw    |
+             |  - Generate JWT  |
+             +------------------+
+                        |
+                        v
+           +------------------------+
+           | Response to client     |
+           | { user, token }        |
+           +------------------------+
+                        |
+                        v
+          +----------------------------+
+          | Client stores JWT (local)  |
+          +----------------------------+
+                        |
+                        v
+          +----------------------------+
+          | Protected API routes       |
+          |  - authenticate middleware |
+          |  - authorize middleware    |
+          +----------------------------+
+                        |
+                        v
+                 +----------------+
+                 | Access granted |
+                 +----------------+
+Explanation:
+
+Client sends POST /login/admin (or coach/referee) with email & password.
+
+Controller calls AuthService.loginUser() to validate credentials.
+
+On success, a JWT token is returned with the user info.
+
+Client stores JWT (local storage / headers).
+
+For protected routes, client sends the JWT in the Authorization header:
+
+Authorization: Bearer <JWT_TOKEN>
+
+
+Middleware authenticate verifies the token, authorize checks role.
+
+Only valid users with correct roles can access protected endpoints.

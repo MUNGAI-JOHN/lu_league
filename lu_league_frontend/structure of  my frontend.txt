@@ -1,0 +1,62 @@
+frontend/
+├── public/
+│   └── index.html
+├── src/
+│   ├── api/
+│   │   ├── axiosClient.ts          → base URL setup for backend
+│   │   └── authApi.ts              → endpoints for login, logout, etc.
+│   │
+│   ├── assets/                     → images, logos, icons
+│   │
+│   ├── components/
+│   │   ├── common/                 → shared components (Navbar, Sidebar)
+│   │   ├── auth/                   → login forms
+│   │   └── dashboard/              → role dashboards (AdminDashboard, etc.)
+│   │
+│   ├── context/
+│   │   └── AuthContext.tsx         → global user/token context
+│   │
+│   ├── hooks/
+│   │   └── useAuth.ts              → helper hooks for authentication logic
+│   │
+│   ├── layouts/
+│   │   ├── AuthLayout.tsx          → layout for login/register pages
+│   │   └── DashboardLayout.tsx     → layout for logged-in views
+│   │
+│   ├── pages/
+│   │   ├── admin/
+│   │   │   ├── Dashboard.tsx
+│   │   │   └── Teams.tsx
+│   │   ├── coach/
+│   │   │   ├── Dashboard.tsx
+│   │   │   └── Players.tsx
+│   │   ├── referee/
+│   │   │   └── Matches.tsx
+│   │   ├── auth/
+│   │   │   ├── LoginAdmin.tsx
+│   │   │   ├── LoginCoach.tsx
+│   │   │   └── LoginReferee.tsx
+│   │   └── home/
+│   │       └── Landing.tsx
+│   │
+│   ├── router/
+│   │   └── AppRouter.tsx           → React Router configuration
+│   │
+│   ├── store/
+│   │   ├── index.ts                → Redux store setup
+│   │   └── slices/
+│   │       └── authSlice.ts        → login/logout reducers
+│   │
+│   ├── styles/
+│   │   └── index.css
+│   │
+│   ├── utils/
+│   │   ├── constants.ts            → API base URL, roles
+│   │   └── helpers.ts              → helper functions
+│   │
+│   ├── App.tsx                     → root component
+│   └── main.tsx                    → React entry point
+│
+├── .env                            → FRONTEND env vars (e.g., VITE_API_URL)
+├── package.json
+└── tsconfig.json                   → if using TypeScript

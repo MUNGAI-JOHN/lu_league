@@ -1,0 +1,60 @@
+lu-league-backend/
+│
+├── src/
+│   ├── config/              # System setup files
+│   │   ├── db.ts            # Connects to PostgreSQL using Drizzle
+│   │   └── env.ts           # Loads environment variables from .env
+│   │
+│   ├── core/                # App-wide logic
+│   │   ├── logger.ts        # (Optional) Logs system events (like match creation)
+│   │   └── errorHandler.ts  # Centralized error management
+│   │
+│   ├── modules/             # Each feature in your system (Teams, Players, Matches)
+│   │   ├── teams/
+│   │   │   ├── team.model.ts        # Database schema for teams
+│   │   │   ├── team.service.ts      # Logic: add team, update stats, etc.
+│   │   │   ├── team.controller.ts   # API endpoints logic (receives HTTP requests)
+│   │   │   ├── team.routes.ts       # Route definitions (e.g., /api/teams)
+│   │   │   └── team.types.ts        # Interfaces and types for TypeScript
+│   │   │
+│   │   ├── players/
+│   │   │   ├── player.model.ts
+│   │   │   ├── player.service.ts
+│   │   │   ├── player.controller.ts
+│   │   │   ├── player.routes.ts
+│   │   │   └── player.types.ts
+│   │   │
+│   │   ├── matches/
+│   │   │   ├── match.model.ts
+│   │   │   ├── match.service.ts
+│   │   │   ├── match.controller.ts
+│   │   │   ├── match.routes.ts
+│   │   │   └── match.types.ts
+│   │   │
+│   │   ├── referees/
+│   │   │   ├── referee.model.ts
+│   │   │   ├── referee.service.ts
+│   │   │   ├── referee.controller.ts
+│   │   │   ├── referee.routes.ts
+│   │   │   └── referee.types.ts
+│   │   │
+│   │   ├── auth/
+│   │   │   ├── auth.controller.ts
+│   │   │   ├── auth.service.ts
+│   │   │   ├── auth.routes.ts
+│   │   │   └── auth.middleware.ts   # Protect routes with JWT
+│   │
+│   ├── utils/
+│   │   ├── helpers.ts               # Reusable functions (e.g. calculating points)
+│   │   └── constants.ts             # Reusable constants (league name, etc.)
+│   │
+│   ├── app.ts                       # Main Express setup (middlewares, routes)
+│   ├── Server.ts                     # Server start point
+│
+├── drizzle/
+│   └── schema.ts                    # Defines all tables for Drizzle ORM
+│
+├── .env                             # Environment variables (DB_URL, PORT, etc.)
+├── package.json
+├── tsconfig.json
+└── README.md
