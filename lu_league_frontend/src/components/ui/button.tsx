@@ -1,11 +1,11 @@
-import React from "react";
 import type { ReactNode } from "react";
+import React from "react";
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   children: ReactNode;
-  variant?: "default" | "outline" | "destructive"; // button style
-  size?: "sm" | "md" | "lg";                       // size variants
-  className?: string;                               // optional extra classes
+  variant?: "default" | "outline" | "destructive" | "ghost"; // button style
+  size?: "sm" | "md" | "lg"; // size variants
+  className?: string; // optional extra classes
 }
 
 const sizeClasses: Record<string, string> = {

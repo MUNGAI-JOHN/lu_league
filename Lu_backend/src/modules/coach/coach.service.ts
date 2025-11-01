@@ -1,6 +1,6 @@
+import { eq } from "drizzle-orm";
 import { db } from "../../config/db.ts";
 import { coaches, users } from "../../drizzle/schema.ts"; // ✅ add users table
-import { eq } from "drizzle-orm";
 
 export const createCoach = async (coachData: {
   user_id: number;
@@ -8,14 +8,11 @@ export const createCoach = async (coachData: {
   gender?: string;
   nationality?: string;
   email: string;
-  phone_number?: string;
+  phone?: string;
+  age?: number;
   address?: string;
-  specialization?: string;
   experience_years?: number;
   certifications?: string;
-  joining_date?: string;
-  contract_end_date?: string;
-  salary?: number;
   status?: string;
   profile_image?: string;
 }) => {
@@ -32,30 +29,85 @@ export const createCoach = async (coachData: {
   const [newCoach] = await db.insert(coaches).values(coachData).returning();
 
   // 3️⃣ Mark user as having completed phase 2
-  await db
-    .update(users)
-    .set({ phase2_completed: true })
-    .where(eq(users.id, coachData.user_id));
+  await db.update(users).set({ phase2_completed: true }).where(eq(users.id, coachData.user_id));
 
   return newCoach;
 };
 
+// fetch all coaches with user info (merge fields if needed)
 
 export const getAllCoaches = async () => {
-  return await db.select().from(coaches);
+  try {
+    const allCoaches = await db
+      .select({
+        id: coaches.id,
+        user_id: coaches.user_id,
+        name: users.name,
+        email: users.email,
+        role: users.role,
+        status: users.status,
+        date_of_birth: coaches.date_of_birth,
+        gender: coaches.gender,
+        nationality: coaches.nationality,
+        phone: coaches.phone,
+        address: coaches.address,
+        age: coaches.age,
+        experience_years: coaches.experience_years,
+        certifications: coaches.certifications,
+        profile_image: coaches.profile_image,
+      })
+      .from(coaches)
+      .leftJoin(users, eq(coaches.user_id, users.id));
+
+    return allCoaches;
+  } catch (err) {
+    console.error("Error in getAllCoaches:", err);
+    throw err; // rethrow to be caught by controller
+  }
 };
 
 export const getCoachById = async (id: number) => {
-  const [coach] = await db.select().from(coaches).where(eq(coaches.id, id));
+  const [coach] = await db
+    .select({
+      id: coaches.id,
+      user_id: coaches.user_id,
+      name: users.name,
+      email: users.email,
+      role: users.role,
+      status: users.status,
+      date_of_birth: coaches.date_of_birth,
+      gender: coaches.gender,
+      nationality: coaches.nationality,
+      phone: coaches.phone,
+      address: coaches.address,
+      age: coaches.age,
+      experience_years: coaches.experience_years,
+      certifications: coaches.certifications,
+      profile_image: coaches.profile_image,
+    })
+    .from(coaches)
+    .leftJoin(users, eq(coaches.user_id, users.id));
+
   return coach;
+};
+export const getCoachService = async (user_id: number) => {
+  try {
+    const Coach = await db
+      .select({
+        id: coaches.id,
+      })
+      .from(coaches)
+      .where(eq(coaches.user_id, user_id));
+
+    return Coach;
+  } catch (err) {
+    console.error("Error in getAllCoach:", err);
+    throw err; // rethrow to be caught by controller
+  }
 };
 
 export const updateCoach = async (id: number, data: any) => {
-  const [updated] = await db
-    .update(coaches)
-    .set(data)
-    .where(eq(coaches.id, id))
-    .returning();
+  const [updated] = await db.update(coaches).set(data).where(eq(coaches.id, id)).returning();
   return updated;
 };
 

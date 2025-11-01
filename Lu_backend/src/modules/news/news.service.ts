@@ -1,5 +1,5 @@
+import { desc, eq } from "drizzle-orm";
 import { db } from "../../config/db.ts";
-import { eq } from "drizzle-orm";
 import { news, users } from "../../drizzle/schema.ts";
 
 // 🟩 Create a news post (by player, coach, referee, or admin)
@@ -26,13 +26,16 @@ export const getAllApprovedNews = async () => {
       content: news.content,
       image_url: news.image_url,
       role: news.role,
+      author_id: news.author_id, // ✅ include it
       author_name: users.name,
       status: news.status,
       created_at: news.created_at,
+      updated_at: news.updated_at,
     })
     .from(news)
     .leftJoin(users, eq(news.author_id, users.id))
-    .where(eq(news.status, "approved"));
+    .where(eq(news.status, "approved"))
+    .orderBy(desc(news.created_at)); // 🔹 sort newest first
 
   return allNews;
 };
@@ -44,10 +47,13 @@ export const getPendingNews = async () => {
       id: news.id,
       title: news.title,
       content: news.content,
+      image_url: news.image_url,
       role: news.role,
+      author_id: news.author_id, // ✅ include it
       author_name: users.name,
       status: news.status,
       created_at: news.created_at,
+      updated_at: news.updated_at,
     })
     .from(news)
     .leftJoin(users, eq(news.author_id, users.id))
@@ -65,6 +71,7 @@ export const getNewsById = async (id: number) => {
       content: news.content,
       image_url: news.image_url,
       role: news.role,
+      author_id: news.author_id, // ✅ include it
       author_name: users.name,
       status: news.status,
       created_at: news.created_at,
@@ -74,6 +81,24 @@ export const getNewsById = async (id: number) => {
     .leftJoin(users, eq(news.author_id, users.id))
     .where(eq(news.id, id));
 
+  return item;
+};
+export const getAllNewsCreated = async () => {
+  const item = await db
+    .select({
+      id: news.id,
+      title: news.title,
+      content: news.content,
+      image_url: news.image_url,
+      role: news.role,
+      author_id: news.author_id, // ✅ include it
+      author_name: users.name,
+      status: news.status,
+      created_at: news.created_at,
+      updated_at: news.updated_at,
+    })
+    .from(news)
+    .leftJoin(users, eq(news.author_id, users.id));
   return item;
 };
 

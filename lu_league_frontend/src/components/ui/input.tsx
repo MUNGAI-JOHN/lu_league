@@ -1,20 +1,23 @@
 import React from "react";
 
-interface InputProps {
-  type?: string; // ✅ add this
-  value: string;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-  placeholder?: string;
-}
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
 
-const Input: React.FC<InputProps> = ({ type = "text", value, onChange, placeholder }) => {
+const Input: React.FC<InputProps> = ({
+  type = "text",
+  value,
+  onChange,
+  placeholder,
+  className,
+  ...rest
+}) => {
   return (
     <input
-      type={type} // now type is recognized
+      type={type}
       value={value}
       onChange={onChange}
       placeholder={placeholder}
-      className="border rounded p-2 w-full mb-2"
+      className={`border rounded p-2 w-full mb-2 ${className || ""}`}
+      {...rest} // ✅ this spreads props like required, disabled, etc.
     />
   );
 };

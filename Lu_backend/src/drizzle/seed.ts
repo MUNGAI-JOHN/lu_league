@@ -1,6 +1,6 @@
+import bcrypt from "bcryptjs";
 import { db } from "../config/db.ts"; // your Drizzle DB instance
 import { users } from "./schema.ts";
-import bcrypt from "bcryptjs";
 
 const insertAdmin = async () => {
   try {
@@ -12,11 +12,10 @@ const insertAdmin = async () => {
       .insert(users)
       .values({
         name: "SuperAdmin",
-        email: "admin@example.com",
+        email: "johntezzzzzz@gmail.com",
         password: hashedPassword, // store hashed password
         role: "admin",
-        phone: "0700000000",
-        status: "approved"
+        status: "approved",
       })
       .returning();
 

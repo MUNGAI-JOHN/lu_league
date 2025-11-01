@@ -1,6 +1,6 @@
+import { jwtDecode } from "jwt-decode";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
 
 // Define the token payload structure
 interface Phase2TokenPayload {
@@ -14,7 +14,10 @@ type PlayerForm = {
   date_of_birth: string;
   gender: "male" | "female" | "";
   age: string;
+  coach_id: string;
   nationality: string;
+  phone: string;
+  address: string;
   position: string;
   jersey_number?: string;
   join_code?: string;
@@ -23,7 +26,6 @@ type PlayerForm = {
   preferred_foot?: string;
   injury_status?: string;
   fitness_level?: string;
-
 };
 
 type CoachForm = {
@@ -32,10 +34,8 @@ type CoachForm = {
   nationality: string;
   age: string;
   address: string;
-  specialization: string;
-  experience_years?: string;
+  experience_years?: number;
   certifications?: string;
-
 };
 
 type RefereeForm = {
@@ -44,11 +44,9 @@ type RefereeForm = {
   age: string;
   nationality: string;
   address: string;
-  specialization: string;
   experience_years?: string;
   matches_officiated?: string;
   certification_level: string;
-
 };
 
 // ----- MAIN COMPONENT -----
@@ -58,6 +56,7 @@ export default function RegisterPhase2() {
 
   const [role, setRole] = useState<Phase2TokenPayload["role"] | null>(null);
   const [userId, setUserId] = useState<number | null>(null);
+  const [coaches, setCoaches] = useState<{ id: number; name: string }[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [form, setForm] = useState<PlayerForm | CoachForm | RefereeForm>({} as any);
@@ -82,10 +81,37 @@ export default function RegisterPhase2() {
     }
   }, [location.search, navigate]);
 
+  useEffect(() => {
+    const fetchCoaches = async () => {
+      try {
+        // only fetch if player is registering
+        if (role !== "player") return;
+
+        const params = new URLSearchParams(location.search);
+        const token = params.get("token");
+        if (!token) return;
+
+        const res = await fetch("http://localhost:5000/api/coach/all", {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (!res.ok) throw new Error("Failed to fetch coaches");
+
+        const data = await res.json();
+        setCoaches(Array.isArray(data) ? data : []);
+      } catch (err) {
+        console.error("Error loading coaches:", err);
+      }
+    };
+
+    fetchCoaches();
+  }, [role, location.search]);
+
   // ✅ Handle input change
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
@@ -93,10 +119,27 @@ export default function RegisterPhase2() {
   // ✅ Validate required fields per role
   const validateForm = () => {
     if (!role) return false;
-    const requiredFields =
-      role === "player"
-        ? ["date_of_birth", "gender", "nationality", "position"]
-        : ["date_of_birth", "gender", "nationality", "address", "specialization"];
+
+    let requiredFields: string[] = [];
+
+    switch (role) {
+      case "player":
+        requiredFields = ["date_of_birth", "gender", "nationality", "position"];
+        break;
+      case "coach":
+        requiredFields = ["date_of_birth", "gender", "nationality", "address"];
+        break;
+      case "referee":
+        requiredFields = [
+          "date_of_birth",
+          "gender",
+          "nationality",
+          "address",
+          "certification_level",
+        ];
+        break;
+    }
+
     return requiredFields.every((field) => (form as any)[field]);
   };
 
@@ -165,19 +208,132 @@ export default function RegisterPhase2() {
       case "player":
         return (
           <>
-           <label>Date of Birth:</label>
-            <input  type="date"  name="date_of_birth" value={(form as CoachForm ).date_of_birth || ""} onChange={handleChange} required className="w-full border p-2 rounded" />
+            <label>Date of Birth:</label>
+            <input
+              type="date"
+              name="date_of_birth"
+              value={(form as PlayerForm).date_of_birth || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              name="age"
+              placeholder="age"
+              value={(form as PlayerForm).age || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              name="phone"
+              placeholder="phone"
+              value={(form as PlayerForm).phone || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
             <label>Gender:</label>
-            <select name="gender" value={(form as CoachForm ).gender || ""} onChange={handleChange} required  className="w-full border p-2 rounded" >
+            <select
+              name="gender"
+              value={(form as PlayerForm).gender || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            >
               <option value="">Select Gender</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
-            <input name="nationality" placeholder="Nationality"value={(form as CoachForm ).nationality || ""} onChange={handleChange} required className="w-full border p-2 rounded" />
-            <input name="address" placeholder="address"value={(form as CoachForm ).address || ""} onChange={handleChange} required className="w-full border p-2 rounded" />
-            <input name="experience_years" placeholder="years of experience"value={(form as CoachForm ).experience_years || ""} onChange={handleChange} required className="w-full border p-2 rounded" />
-            <input name="certifications" placeholder="certifications"value={(form as CoachForm ).certifications || ""} onChange={handleChange} required className="w-full border p-2 rounded" />  
-            <input name="age" placeholder="age"value={(form as CoachForm ).age || ""} onChange={handleChange} required className="w-full border p-2 rounded" />
+            <label>Assign Coach:</label>
+            <select
+              name="coach_id"
+              value={(form as PlayerForm).coach_id || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            >
+              <option value="">Select a Coach</option>
+              {coaches.map((coach) => (
+                <option key={coach.id} value={coach.id}>
+                  {coach.name}
+                </option>
+              ))}
+            </select>
+            <input
+              name="address"
+              placeholder="address"
+              value={(form as PlayerForm).address || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              name="nationality"
+              placeholder="Nationality"
+              value={(form as PlayerForm).nationality || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              type="number"
+              name="position"
+              placeholder="position"
+              value={(form as PlayerForm).position || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              type="number"
+              name="jersey_number"
+              placeholder="jersey_number"
+              value={(form as PlayerForm).jersey_number || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              name="height"
+              placeholder="height"
+              value={(form as PlayerForm).height || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              name="preferred_foot"
+              placeholder="preferred_foot"
+              value={(form as PlayerForm).preferred_foot || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              name="weight"
+              placeholder="weight"
+              value={(form as PlayerForm).weight || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              name="injury_status"
+              placeholder="injury_status"
+              value={(form as PlayerForm).injury_status || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              name="fitness_level"
+              placeholder="fitness_level"
+              value={(form as PlayerForm).fitness_level || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
           </>
         );
 
@@ -185,19 +341,66 @@ export default function RegisterPhase2() {
         return (
           <>
             <label>Date of Birth:</label>
-            <input  type="date"  name="date_of_birth" value={(form as CoachForm ).date_of_birth || ""} onChange={handleChange} required className="w-full border p-2 rounded" />
+            <input
+              type="date"
+              name="date_of_birth"
+              value={(form as CoachForm).date_of_birth || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
             <label>Gender:</label>
-            <select name="gender" value={(form as CoachForm ).gender || ""} onChange={handleChange} required  className="w-full border p-2 rounded" >
+            <select
+              name="gender"
+              value={(form as CoachForm).gender || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            >
               <option value="">Select Gender</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
-            <input name="nationality" placeholder="Nationality"value={(form as CoachForm ).nationality || ""} onChange={handleChange} required className="w-full border p-2 rounded" />
-            <input name="address" placeholder="address"value={(form as CoachForm ).address || ""} onChange={handleChange} required className="w-full border p-2 rounded" />
-            <input name="experience_years" placeholder="years of experience"value={(form as CoachForm ).experience_years || ""} onChange={handleChange} required className="w-full border p-2 rounded" />
-            <input name="certifications" placeholder="certifications"value={(form as CoachForm ).certifications || ""} onChange={handleChange} required className="w-full border p-2 rounded" />  
-            <input name="age" placeholder="age"value={(form as CoachForm ).age || ""} onChange={handleChange} required className="w-full border p-2 rounded" />
-            
+            <input
+              name="nationality"
+              placeholder="Nationality"
+              value={(form as CoachForm).nationality || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              name="address"
+              placeholder="address"
+              value={(form as CoachForm).address || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              name="experience_years"
+              placeholder="years of experience"
+              value={(form as CoachForm).experience_years || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              name="certifications"
+              placeholder="certifications"
+              value={(form as CoachForm).certifications || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              name="age"
+              placeholder="age"
+              value={(form as CoachForm).age || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
           </>
         );
 
@@ -205,19 +408,74 @@ export default function RegisterPhase2() {
         return (
           <>
             <label>Date of Birth:</label>
-            <input  type="date"  name="date_of_birth" value={(form as RefereeForm ).date_of_birth || ""} onChange={handleChange} required className="w-full border p-2 rounded" />
+            <input
+              type="date"
+              name="date_of_birth"
+              value={(form as RefereeForm).date_of_birth || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
             <label>Gender:</label>
-            <select name="gender" value={(form as RefereeForm ).gender || ""} onChange={handleChange} required  className="w-full border p-2 rounded" >
+            <select
+              name="gender"
+              value={(form as RefereeForm).gender || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            >
               <option value="">Select Gender</option>
               <option value="male">Male</option>
               <option value="female">Female</option>
             </select>
-            <input name="nationality" placeholder="Nationality"value={(form as RefereeForm ).nationality || ""} onChange={handleChange} required className="w-full border p-2 rounded" />
-            <input name="address" placeholder="address"value={(form as RefereeForm ).address || ""} onChange={handleChange} required className="w-full border p-2 rounded" />
-            <input name="experience_years" placeholder="years of experience"value={(form as RefereeForm ).experience_years || ""} onChange={handleChange} required  className="w-full border p-2 rounded" />
-            <input name="certification_level" placeholder="certifications"value={(form as RefereeForm ).certification_level || ""} onChange={handleChange} required className="w-full border p-2 rounded" />  
-            <input name="age" placeholder="age"value={(form as RefereeForm ).age || ""} onChange={handleChange} required className="w-full border p-2 rounded" />
-            <input name="matches_officiated" placeholder="matches_officiated"value={(form as RefereeForm ).matches_officiated || ""} onChange={handleChange} required className="w-full border p-2 rounded" />
+            <input
+              name="nationality"
+              placeholder="Nationality"
+              value={(form as RefereeForm).nationality || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              name="address"
+              placeholder="address"
+              value={(form as RefereeForm).address || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              name="experience_years"
+              placeholder="years of experience"
+              value={(form as RefereeForm).experience_years || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              name="certification_level"
+              placeholder="certifications"
+              value={(form as RefereeForm).certification_level || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              name="age"
+              placeholder="age"
+              value={(form as RefereeForm).age || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
+            <input
+              name="matches_officiated"
+              placeholder="matches_officiated"
+              value={(form as RefereeForm).matches_officiated || ""}
+              onChange={handleChange}
+              required
+              className="w-full border p-2 rounded"
+            />
           </>
         );
 
@@ -230,9 +488,7 @@ export default function RegisterPhase2() {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100">
       <div className="bg-white shadow-md rounded-lg p-8 w-full max-w-md">
-        <h2 className="text-2xl font-bold text-center mb-6">
-          Register - Phase 2 ({role})
-        </h2>
+        <h2 className="text-2xl font-bold text-center mb-6">Register - Phase 2 ({role})</h2>
 
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 

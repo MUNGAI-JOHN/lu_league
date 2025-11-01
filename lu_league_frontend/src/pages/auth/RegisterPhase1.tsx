@@ -6,7 +6,6 @@ export default function RegisterPhase1() {
   const [form, setForm] = useState({
     name: "",
     email: "",
-    phone: "",
     password: "",
     role: "",
   });
@@ -56,19 +55,46 @@ export default function RegisterPhase1() {
         {error && <p className="text-red-500 text-center mb-4">{error}</p>}
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          <input name="name" placeholder="Name" onChange={handleChange} className="w-full border p-2 rounded" required />
-          <input name="email" type="email" placeholder="Email" onChange={handleChange} className="w-full border p-2 rounded" required />
-          <input name="phone" placeholder="Phone" onChange={handleChange} className="w-full border p-2 rounded" required />
-          <input name="password" type="password" placeholder="Password" onChange={handleChange} className="w-full border p-2 rounded" required />
-
-          <select name="role" onChange={handleChange} className="w-full border p-2 rounded" required>
+          <input
+            name="name"
+            placeholder="Name"
+            onChange={handleChange}
+            className="w-full border p-2 rounded"
+            required
+          />
+          <input
+            name="email"
+            type="email"
+            placeholder="Email"
+            onChange={handleChange}
+            className="w-full border p-2 rounded"
+            required
+          />
+          <input
+            name="password"
+            type="password"
+            placeholder="Password"
+            onChange={handleChange}
+            className="w-full border p-2 rounded"
+            required
+          />
+          <select
+            name="role"
+            onChange={handleChange}
+            className="w-full border p-2 rounded"
+            required
+          >
             <option value="">Select Role</option>
             <option value="coach">Coach</option>
             <option value="referee">Referee</option>
             <option value="player">Player</option>
           </select>
 
-          <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white py-2 rounded">
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-2 rounded"
+          >
             {loading ? "Registering..." : "Continue to Phase 2"}
           </button>
         </form>

@@ -1,20 +1,25 @@
 import { Link } from "react-router-dom";
+import Button from "../../components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../../components/ui/card";
-import  Button  from "../../components/ui/button";
 
 export const Landing = () => {
   return (
     <div className="pt-20">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-blue-500 to-indigo-600 text-white py-24">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">
-            Welcome to LU League
-          </h1>
+      <section
+        className="relative text-white py-24 bg-cover bg-center"
+        style={{
+          backgroundImage:
+            "url('https://res.cloudinary.com/djvdenkly/image/upload/v1761917188/homepage_js3v2k.jpg')",
+        }}
+      >
+        <div className="absolute inset-0 bg-black/50" /> {/* dark overlay for contrast */}
+        <div className="relative max-w-7xl mx-auto px-1 text-left">
+          <h1 className="text-2xl md:text-5xl font-bold mb-1">Welcome to LU League</h1>
           <p className="text-lg md:text-xl mb-8">
             Track your favorite teams, players, and matches all in one place.
           </p>
-          <div className="flex justify-center gap-4">
+          <div className="flex justify-left gap-4">
             <Link to="/standings">
               <Button variant="default">View Standings</Button>
             </Link>

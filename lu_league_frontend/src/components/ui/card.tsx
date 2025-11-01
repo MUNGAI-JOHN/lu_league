@@ -1,6 +1,6 @@
 // src/components/ui/card.tsx
+import type { ReactNode } from "react";
 import React from "react";
-import type{ReactNode} from "react";
 
 // -------------------
 // Props interfaces
@@ -24,7 +24,10 @@ interface CardTitleProps {
   children: ReactNode;
   className?: string;
 }
-
+interface CardFooterProps {
+  children: ReactNode;
+  className?: string;
+}
 // -------------------
 // Components
 // -------------------
@@ -44,3 +47,6 @@ export const CardTitle: React.FC<CardTitleProps> = ({ children, className }) => 
   return <h3 className={`text-lg font-bold ${className || ""}`}>{children}</h3>;
 };
 
+export const CardFooter: React.FC<CardFooterProps> = ({ children, className }) => {
+  return <div className={`border-t p-4 flex justify-end ${className || ""}`}>{children}</div>;
+};

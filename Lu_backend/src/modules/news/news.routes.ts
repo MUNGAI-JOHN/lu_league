@@ -1,14 +1,15 @@
 import { Router } from "express";
 import { authenticateJWT } from "../auth/auth.middleware.ts";
 import {
-  createNews,
-  getAllApprovedNews,
-  getPendingNews,
-  getNewsById,
-  updateNews,
   approveNews,
-  rejectNews,
+  createNews,
   deleteNews,
+  getAllApprovedNew,
+  getAllNews,
+  getNewsById,
+  getPendingNews,
+  rejectNews,
+  updateNews,
 } from "./news.controller.ts";
 
 const router = Router();
@@ -19,13 +20,16 @@ const router = Router();
  */
 
 // 👇 Create — Player, Coach, Referee, Admin
-router.post("/", authenticateJWT, createNews);
+router.post("/create-news", authenticateJWT, createNews);
 
+router.get("/all", getAllNews);
+// 📜 Get all approved news (public)
+router.get("/approved", getAllApprovedNew);
 // 📘 Get single news (anyone)
 router.get("/:id", getNewsById);
 
 // 📜 Get all approved news (public)
-router.get("/", getAllApprovedNews);
+router.get("/approved", getAllApprovedNew);
 
 // 🕓 Get all pending news (Admin)
 router.get("/admin/pending", authenticateJWT, getPendingNews);

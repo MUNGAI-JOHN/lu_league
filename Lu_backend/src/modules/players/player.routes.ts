@@ -1,15 +1,16 @@
 import express from "express";
+import { authenticateJWT } from "../auth/auth.middleware.ts";
 import {
   addPlayer,
-  getPlayers,
-  getPlayer,
-  editPlayer,
-  removePlayer,
   approvePendingPlayer,
-  rejectPendingPlayer,
+  editPlayer,
+  getCoachPlayers,
   getPendingPlayers,
+  getplayerContoller,
+  getPlayers,
+  rejectPendingPlayer,
+  removePlayer,
 } from "./player.controller.ts";
-import { authenticateJWT } from "../auth/auth.middleware.ts";
 
 const router = express.Router();
 
@@ -17,14 +18,15 @@ const router = express.Router();
 router.post("/register-phase2", authenticateJWT, addPlayer);
 
 // Coach-only routes
+router.get("/coach/:coachId", authenticateJWT, getCoachPlayers); // Get team by coach_id
 router.get("/pending", authenticateJWT, getPendingPlayers);
 router.put("/:id/approve", authenticateJWT, approvePendingPlayer);
 router.put("/:id/reject", authenticateJWT, rejectPendingPlayer);
 
 // General protected routes
-router.get("/", authenticateJWT, getPlayers);
-router.get("/:id", authenticateJWT, getPlayer);
-router.put("/:id", authenticateJWT, editPlayer);
+router.get("/all", authenticateJWT, getPlayers);
+router.get("/:id", authenticateJWT, getplayerContoller);
+router.patch("/:id", authenticateJWT, editPlayer);
 router.delete("/:id", authenticateJWT, removePlayer);
 
 export default router;

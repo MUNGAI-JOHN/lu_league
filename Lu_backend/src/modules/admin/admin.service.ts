@@ -1,8 +1,8 @@
 // src/modules/admin/admin.service.ts
+import bcrypt from "bcrypt";
+import { eq } from "drizzle-orm";
 import { db } from "../../config/db.ts";
 import { users } from "../../drizzle/schema.ts";
-import { eq } from "drizzle-orm";
-import bcrypt from "bcrypt";
 
 interface CreateUserData {
   name: string;
@@ -24,7 +24,6 @@ export const createUserByAdmin = async (data: CreateUserData) => {
     .values({
       name: data.name,
       email: data.email,
-      phone: data.phone,
       password: hashedPassword,
       role: data.role,
       status: data.status || "approved", // Admin-created users are approved
@@ -57,11 +56,7 @@ export const updateUserByAdmin = async (id: number, data: Partial<CreateUserData
     data.password = await bcrypt.hash(data.password, 10);
   }
 
-  const [updatedUser] = await db
-    .update(users)
-    .set(data)
-    .where(eq(users.id, id))
-    .returning();
+  const [updatedUser] = await db.update(users).set(data).where(eq(users.id, id)).returning();
 
   return updatedUser;
 };

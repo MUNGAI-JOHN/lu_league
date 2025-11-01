@@ -1,25 +1,25 @@
 // src/components/common/Sidebar.tsx
+import { cn } from "@/lib/utils";
 import {
-  Home,
-  Users,
-  Trophy,
-  Shield,
-  UserCog,
-  UserCheck,
-  Scale,
-  Bell,
   BarChart,
-  Settings,
-  LogOut,
+  Bell,
+  Calendar,
   ClipboardList,
   Dumbbell,
-  Calendar,
-  MessageSquare,
+  Home,
   LineChart,
-  Watch,
+  LogOut,
+  MessageSquare,
   Newspaper,
+  Scale,
+  Settings,
+  Shield,
+  Trophy,
+  UserCheck,
+  UserCog,
+  Users,
+  Watch,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { Link, useLocation } from "react-router-dom";
 
 interface SidebarProps {
@@ -37,30 +37,50 @@ interface NavItem {
 // ✅ ALL NAVIGATION ITEMS (grouped by roles)
 const navItems: NavItem[] = [
   // Common to all roles
-  { label: "Dashboard", icon: Home, path: "/dashboard/home", roles: ["admin", "coach", "referee", "player"] },
+  {
+    label: "Dashboard",
+    icon: Home,
+    path: "/dashboard/:role",
+    roles: ["admin", "coach", "referee", "player"],
+  },
 
   // ADMIN DASHBOARD
   { label: "Users", icon: Users, path: "/dashboard/admin/users", roles: ["admin"] },
-  { label: "Matches", icon: Trophy, path: "/dashboard/admin/matches", roles: ["admin"] },
-  { label: "Teams", icon: Shield, path: "/dashboard/admin/teams", roles: ["admin"] },
   { label: "Coaches", icon: UserCog, path: "/dashboard/admin/coaches", roles: ["admin"] },
+  { label: "Teams", icon: Shield, path: "/dashboard/admin/teams", roles: ["admin"] },
   { label: "Players", icon: UserCheck, path: "/dashboard/admin/players", roles: ["admin"] },
   { label: "Referees", icon: Scale, path: "/dashboard/admin/referees", roles: ["admin"] },
+  { label: "Matches", icon: Trophy, path: "/dashboard/admin/matches", roles: ["admin"] },
   { label: "News", icon: Newspaper, path: "/dashboard/admin/news", roles: ["admin"] },
   { label: "Announcements", icon: Bell, path: "/dashboard/admin/announcements", roles: ["admin"] },
   { label: "Reports", icon: BarChart, path: "/dashboard/admin/reports", roles: ["admin"] },
   { label: "Settings", icon: Settings, path: "/dashboard/admin/settings", roles: ["admin"] },
 
   // COACH DASHBOARD
+  { label: "profile", icon: UserCog, path: "/dashboard/coach/coaches", roles: ["coach"] },
+  { label: "Players", icon: UserCheck, path: "/dashboard/coach/players", roles: ["coach"] },
   { label: "Team", icon: Users, path: "/dashboard/coach/team", roles: ["coach"] },
-  { label: "Player Performance", icon: LineChart, path: "/dashboard/coach/performance", roles: ["coach"] },
+  {
+    label: "Player Performance",
+    icon: LineChart,
+    path: "/dashboard/coach/performance",
+    roles: ["coach"],
+  },
+  { label: "News", icon: Newspaper, path: "/dashboard/coach/news", roles: ["coach"] },
   { label: "Training", icon: Dumbbell, path: "/dashboard/coach/training", roles: ["coach"] },
   { label: "Schedule", icon: Calendar, path: "/dashboard/coach/schedule", roles: ["coach"] },
   { label: "Notifications", icon: Bell, path: "/dashboard/coach/notifications", roles: ["coach"] },
   { label: "Settings", icon: Settings, path: "/dashboard/coach/settings", roles: ["coach"] },
 
   // PLAYER DASHBOARD
-  { label: "My Performance", icon: BarChart, path: "/dashboard/player/performance", roles: ["player"] },
+  { label: "profile", icon: UserCog, path: "/dashboard/player/players", roles: ["player"] },
+  {
+    label: "My Performance",
+    icon: BarChart,
+    path: "/dashboard/player/performance",
+    roles: ["player"],
+  },
+  { label: "News", icon: Newspaper, path: "/dashboard/player/news", roles: ["player"] },
   { label: "Training", icon: Dumbbell, path: "/dashboard/player/training", roles: ["player"] },
   { label: "Matches", icon: Trophy, path: "/dashboard/player/matches", roles: ["player"] },
   { label: "Messages", icon: MessageSquare, path: "/dashboard/player/messages", roles: ["player"] },
@@ -69,10 +89,26 @@ const navItems: NavItem[] = [
 
   // REFEREE DASHBOARD
   { label: "My Matches", icon: Trophy, path: "/dashboard/referee/matches", roles: ["referee"] },
-  { label: "Match Reports", icon: ClipboardList, path: "/dashboard/referee/reports", roles: ["referee"] },
+  {
+    label: "Match Reports",
+    icon: ClipboardList,
+    path: "/dashboard/referee/reports",
+    roles: ["referee"],
+  },
   { label: "Assignments", icon: Watch, path: "/dashboard/referee/assignments", roles: ["referee"] },
-  { label: "Performance Review", icon: Scale, path: "/dashboard/referee/review", roles: ["referee"] },
-  { label: "Messages", icon: MessageSquare, path: "/dashboard/referee/messages", roles: ["referee"] },
+  {
+    label: "Performance Review",
+    icon: Scale,
+    path: "/dashboard/referee/review",
+    roles: ["referee"],
+  },
+  { label: "News", icon: Newspaper, path: "/dashboard/referee/news", roles: ["referee"] },
+  {
+    label: "Messages",
+    icon: MessageSquare,
+    path: "/dashboard/referee/messages",
+    roles: ["referee"],
+  },
   { label: "Settings", icon: Settings, path: "/dashboard/referee/settings", roles: ["referee"] },
 ];
 
@@ -92,7 +128,7 @@ const Sidebar = ({ role, onLogout }: SidebarProps) => {
             .map(({ label, icon: Icon, path }) => (
               <Link
                 key={label}
-                to={path}
+                to={path.replace(":role", role)}
                 className={cn(
                   "flex items-center gap-3 px-4 py-2 rounded-md hover:bg-sky-600 transition-colors",
                   location.pathname === path && "bg-sky-600"

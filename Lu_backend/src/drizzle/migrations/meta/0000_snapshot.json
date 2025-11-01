@@ -1,5 +1,5 @@
 {
-  "id": "0af7a11d-e776-4c4c-b95f-ac730f98752e",
+  "id": "c662912a-b6d4-4053-a363-87a3a4bbea2c",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
@@ -26,6 +26,18 @@
           "primaryKey": false,
           "notNull": true
         },
+        "age": {
+          "name": "age",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "gender": {
           "name": "gender",
           "type": "varchar(10)",
@@ -44,12 +56,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "specialization": {
-          "name": "specialization",
-          "type": "varchar(50)",
-          "primaryKey": false,
-          "notNull": false
-        },
         "experience_years": {
           "name": "experience_years",
           "type": "integer",
@@ -60,18 +66,6 @@
         "certifications": {
           "name": "certifications",
           "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "joining_date": {
-          "name": "joining_date",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "contract_end_date": {
-          "name": "contract_end_date",
-          "type": "date",
           "primaryKey": false,
           "notNull": false
         },
@@ -124,7 +118,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -135,6 +129,20 @@
           "nullsNotDistinct": false,
           "columns": [
             "user_id"
+          ]
+        },
+        "coaches_age_unique": {
+          "name": "coaches_age_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "age"
+          ]
+        },
+        "coaches_phone_unique": {
+          "name": "coaches_phone_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "phone"
           ]
         }
       },
@@ -263,7 +271,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "matches_away_team_id_teams_id_fk": {
@@ -276,7 +284,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "matches_referee_id_referees_id_fk": {
@@ -289,7 +297,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -383,139 +391,6 @@
       "checkConstraints": {},
       "isRLSEnabled": false
     },
-    "public.player_stats": {
-      "name": "player_stats",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "player_id": {
-          "name": "player_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "matches_played": {
-          "name": "matches_played",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 0
-        },
-        "goals_scored": {
-          "name": "goals_scored",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 0
-        },
-        "assists": {
-          "name": "assists",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 0
-        },
-        "yellow_cards": {
-          "name": "yellow_cards",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 0
-        },
-        "red_cards": {
-          "name": "red_cards",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 0
-        },
-        "clean_sheets": {
-          "name": "clean_sheets",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 0
-        },
-        "saves": {
-          "name": "saves",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 0
-        },
-        "goals_conceded": {
-          "name": "goals_conceded",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false,
-          "default": 0
-        },
-        "player_rating": {
-          "name": "player_rating",
-          "type": "numeric(4, 2)",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "'0'"
-        },
-        "scouting_notes": {
-          "name": "scouting_notes",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "awards": {
-          "name": "awards",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "salary": {
-          "name": "salary",
-          "type": "numeric(12, 2)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "market_value": {
-          "name": "market_value",
-          "type": "numeric(12, 2)",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": false,
-          "default": "now()"
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "player_stats_player_id_players_id_fk": {
-          "name": "player_stats_player_id_players_id_fk",
-          "tableFrom": "player_stats",
-          "tableTo": "players",
-          "columnsFrom": [
-            "player_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "policies": {},
-      "checkConstraints": {},
-      "isRLSEnabled": false
-    },
     "public.players": {
       "name": "players",
       "schema": "",
@@ -538,9 +413,27 @@
           "primaryKey": false,
           "notNull": true
         },
+        "age": {
+          "name": "age",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(15)",
+          "primaryKey": false,
+          "notNull": false
+        },
         "gender": {
           "name": "gender",
           "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "address": {
+          "name": "address",
+          "type": "varchar(255)",
           "primaryKey": false,
           "notNull": false
         },
@@ -626,18 +519,6 @@
           "notNull": false,
           "default": "'100'"
         },
-        "contract_start_date": {
-          "name": "contract_start_date",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "contract_end_date": {
-          "name": "contract_end_date",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": false
-        },
         "player_image": {
           "name": "player_image",
           "type": "varchar(255)",
@@ -692,7 +573,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "players_team_id_teams_id_fk": {
@@ -729,6 +610,20 @@
           "nullsNotDistinct": false,
           "columns": [
             "user_id"
+          ]
+        },
+        "players_age_unique": {
+          "name": "players_age_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "age"
+          ]
+        },
+        "players_phone_unique": {
+          "name": "players_phone_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "phone"
           ]
         },
         "players_jersey_number_unique": {
@@ -768,6 +663,18 @@
         "gender": {
           "name": "gender",
           "type": "varchar(10)",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "age": {
+          "name": "age",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "phone": {
+          "name": "phone",
+          "type": "varchar(15)",
           "primaryKey": false,
           "notNull": false
         },
@@ -816,18 +723,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "joining_date": {
-          "name": "joining_date",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "contract_end_date": {
-          "name": "contract_end_date",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": false
-        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -864,7 +759,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -875,6 +770,20 @@
           "nullsNotDistinct": false,
           "columns": [
             "user_id"
+          ]
+        },
+        "referees_age_unique": {
+          "name": "referees_age_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "age"
+          ]
+        },
+        "referees_phone_unique": {
+          "name": "referees_phone_unique",
+          "nullsNotDistinct": false,
+          "columns": [
+            "phone"
           ]
         }
       },
@@ -958,7 +867,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         },
         "results_man_of_the_match_players_id_fk": {
@@ -971,7 +880,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -1158,7 +1067,7 @@
         },
         "created_by": {
           "name": "created_by",
-          "type": "varchar",
+          "type": "integer",
           "primaryKey": false,
           "notNull": true
         },
@@ -1219,6 +1128,19 @@
           "columnsTo": [
             "id"
           ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "teams_created_by_users_id_fk": {
+          "name": "teams_created_by_users_id_fk",
+          "tableFrom": "teams",
+          "tableTo": "users",
+          "columnsFrom": [
+            "created_by"
+          ],
+          "columnsTo": [
+            "id"
+          ],
           "onDelete": "no action",
           "onUpdate": "no action"
         }
@@ -1266,12 +1188,6 @@
           "primaryKey": false,
           "notNull": false
         },
-        "phone": {
-          "name": "phone",
-          "type": "varchar(15)",
-          "primaryKey": false,
-          "notNull": false
-        },
         "password": {
           "name": "password",
           "type": "varchar(255)",
@@ -1291,6 +1207,13 @@
           "notNull": false,
           "default": "'pending'"
         },
+        "phase2_completed": {
+          "name": "phase2_completed",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
         "created_at": {
           "name": "created_at",
           "type": "timestamp",
@@ -1308,13 +1231,6 @@
           "nullsNotDistinct": false,
           "columns": [
             "email"
-          ]
-        },
-        "users_phone_unique": {
-          "name": "users_phone_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "phone"
           ]
         }
       },

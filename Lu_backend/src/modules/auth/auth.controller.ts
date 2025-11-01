@@ -1,22 +1,21 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
-import { eq } from "drizzle-orm";
 import { db } from "../../config/db.ts"; // ✅ Import Drizzle instance
-import { players, coaches, referees } from "../../drizzle/schema.ts"; // ✅ Import your role tables
-import { registerPhase1, registerPhase2, loginUser } from "./auth.service.ts";
+import { coaches, players, referees } from "../../drizzle/schema.ts"; // ✅ Import your role tables
+import { loginUser, registerPhase1 } from "./auth.service.ts";
 
 /**
  * ✅ PHASE 1: Register base user (admin, coach, referee, player)
  */
 export const registerPhase1Controller = async (req: Request, res: Response) => {
   try {
-    const { name, email, phone, password, role } = req.body;
+    const { name, email, password, role } = req.body;
 
     if (!name || !email || !password || !role) {
       return res.status(400).json({ error: "Missing required fields" });
     }
 
-    const result = await registerPhase1(name, email, phone, password, role);
+    const result = await registerPhase1(name, email, password, role);
     return res.status(201).json(result);
   } catch (error: any) {
     return res.status(500).json({ error: error.message });

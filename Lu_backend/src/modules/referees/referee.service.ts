@@ -1,6 +1,6 @@
+import { eq } from "drizzle-orm";
 import { db } from "../../config/db.ts";
 import { referees, users } from "../../drizzle/schema.ts"; // ✅ add users table
-import { eq } from "drizzle-orm";
 
 export const createReferee = async (refereeData: {
   user_id: number;
@@ -29,17 +29,41 @@ export const createReferee = async (refereeData: {
   const [newReferee] = await db.insert(referees).values(refereeData).returning();
 
   // ✅ 3. Mark phase 2 as completed in users table
-  await db
-    .update(users)
-    .set({ phase2_completed: true })
-    .where(eq(users.id, refereeData.user_id));
+  await db.update(users).set({ phase2_completed: true }).where(eq(users.id, refereeData.user_id));
 
   return newReferee;
 };
 
-
 export const getAllReferees = async () => {
-  return await db.select().from(referees);
+  try {
+    const allReferees = await db
+      .select({
+        // --- referee info ---
+        id: referees.id,
+        user_id: referees.user_id,
+        name: users.name,
+        email: users.email,
+        role: users.role,
+        status: users.status,
+        date_of_birth: referees.date_of_birth,
+        gender: referees.gender,
+        nationality: referees.nationality,
+        phone: referees.phone,
+        address: referees.address,
+        age: referees.age,
+        certification_level: referees.certification_level,
+        experience_years: referees.experience_years,
+        matches_officiated: referees.matches_officiated,
+        profile_image: referees.profile_image,
+      })
+      .from(referees)
+      .leftJoin(users, eq(referees.user_id, users.id));
+
+    return allReferees;
+  } catch (err) {
+    console.error("Error in getAllplayers:", err);
+    throw err; // rethrow to be caught by controller
+  }
 };
 
 export const getRefereeById = async (id: number) => {
@@ -48,11 +72,7 @@ export const getRefereeById = async (id: number) => {
 };
 
 export const updateReferee = async (id: number, data: any) => {
-  const [updated] = await db
-    .update(referees)
-    .set(data)
-    .where(eq(referees.id, id))
-    .returning();
+  const [updated] = await db.update(referees).set(data).where(eq(referees.id, id)).returning();
   return updated;
 };
 

@@ -1,12 +1,12 @@
 import { Router } from "express";
+import { authenticateJWT } from "../auth/auth.middleware.ts";
 import {
   addReferee,
-  getReferees,
-  getReferee,
   editReferee,
+  getReferee,
+  getReferees,
   removeReferee,
 } from "./referee.controller.ts";
-import { authenticateJWT } from "../auth/auth.middleware.ts";
 
 const router = Router();
 
@@ -14,9 +14,9 @@ const router = Router();
 router.post("/register-phase2", authenticateJWT, addReferee);
 
 // CRUD
-router.get("/", getReferees);
+router.get("/all", getReferees);
 router.get("/:id", getReferee);
-router.put("/:id", authenticateJWT, editReferee);
+router.patch("/:id", authenticateJWT, editReferee);
 router.delete("/:id", authenticateJWT, removeReferee);
 
 export default router;

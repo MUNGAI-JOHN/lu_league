@@ -1,9 +1,9 @@
-import express, { Application } from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import express, { Application } from "express";
 
-// Import your routes 
-import adminroutes from "./modules/admin/admin.routes.ts"
+// Import your routes
+import adminroutes from "./modules/admin/admin.routes.ts";
 // Import your coachRoutes
 import coachRoutes from "./modules/coach/coach.routes.ts";
 // Import your refereeRoutes
@@ -17,6 +17,7 @@ import matchRoutes from "./modules/matches/match.routes.ts";
 // Import your authRoutes
 import authRoutes from "./modules/auth/auth.routes.ts";
 /*import resetpasswordRoutes from "./modules/auth/resetpassword/resetpassword.routes.ts";*/
+import newsRoutes from "./modules/news/news.routes.ts";
 import testRoutes from "./modules/routes/test.routes.ts";
 
 // Initialize environment variables Lu_backend\src\modules\teams\team.routes.ts
@@ -35,13 +36,14 @@ app.get("/", (req, res) => {
 });
 
 // Register routes
-app.use("/api/admin", adminroutes)
+app.use("/api/admin", adminroutes);
 app.use("/api/coach", coachRoutes);
 app.use("/api/referee", refereeRoutes);
 app.use("/api/team", teamRoutes);
 app.use("/api/player", playerRoutes);
 app.use("/api/match", matchRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/news", newsRoutes);
 /*app.use("/api/auth/reset-password", resetpasswordRoutes);*/
 app.use("/api", testRoutes);
 

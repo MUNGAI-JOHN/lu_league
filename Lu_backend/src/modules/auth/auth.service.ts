@@ -1,8 +1,8 @@
 import bcrypt from "bcryptjs";
+import { eq } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 import { db } from "../../config/db.ts";
-import { users, coaches, referees, players } from "../../drizzle/schema.ts";
-import { eq } from "drizzle-orm";
+import { coaches, players, referees, users } from "../../drizzle/schema.ts";
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 
@@ -12,7 +12,6 @@ const JWT_SECRET = process.env.JWT_SECRET || "supersecretkey";
 export const registerPhase1 = async (
   name: string,
   email: string,
-  phone: string,
   password: string,
   role: string
 ) => {
@@ -35,7 +34,6 @@ export const registerPhase1 = async (
     .values({
       name,
       email,
-      phone,
       password: hashedPassword,
       role,
       status: "pending", // <-- new field to track approval

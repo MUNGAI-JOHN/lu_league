@@ -1,8 +1,8 @@
 // src/modules/team/team.service.ts
-import { db } from "../../config/db.ts";
-import { teams } from "../../drizzle/schema.ts";
 import { eq } from "drizzle-orm";
 import { nanoid } from "nanoid";
+import { db } from "../../config/db.ts";
+import { coaches, teams } from "../../drizzle/schema.ts";
 
 // 🟢 CREATE TEAM
 export const createTeam = async (teamData: any) => {
@@ -33,11 +33,7 @@ export const getTeamById = async (id: number) => {
 
 // 🟠 UPDATE TEAM
 export const updateTeam = async (id: number, teamData: any) => {
-  const [updated] = await db
-    .update(teams)
-    .set(teamData)
-    .where(eq(teams.id, id))
-    .returning();
+  const [updated] = await db.update(teams).set(teamData).where(eq(teams.id, id)).returning();
   return updated;
 };
 
@@ -50,4 +46,23 @@ export const deleteTeam = async (id: number) => {
 // 🟡 GET ALL PENDING TEAMS
 export const getPendingTeams = async () => {
   return await db.select().from(teams).where(eq(teams.approval_status, "pending"));
+};
+// 🟢 GET TEAMS BY COACH ID
+export const getTeamsByCoach = async (coachId: number) => {
+  return await db.select().from(teams).where(eq(teams.coach_id, coachId));
+};
+export const getAllCoach = async (user_id: number) => {
+  try {
+    const allCoach = await db
+      .select({
+        id: coaches.id,
+      })
+      .from(coaches)
+      .where(eq(coaches.user_id, user_id));
+
+    return allCoach;
+  } catch (err) {
+    console.error("Error in getAllCoach:", err);
+    throw err; // rethrow to be caught by controller
+  }
 };

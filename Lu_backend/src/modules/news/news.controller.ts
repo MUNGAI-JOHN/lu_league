@@ -19,6 +19,7 @@ export const createNews = async (req: AuthRequest, res: Response) => {
     };
 
     const created = await newsService.createNews(newsData);
+    console.log(created);
     res.status(201).json({ message: "News submitted successfully", news: created });
   } catch (error: any) {
     res.status(500).json({ error: error.message });
@@ -26,10 +27,11 @@ export const createNews = async (req: AuthRequest, res: Response) => {
 };
 
 // 🟨 Get All Approved News (Public)
-export const getAllApprovedNews = async (_req: Request, res: Response) => {
+export const getAllApprovedNew = async (_req: Request, res: Response) => {
   try {
     const newsList = await newsService.getAllApprovedNews();
     res.json(newsList);
+    console.log(newsList);
   } catch (error: any) {
     res.status(500).json({ error: error.message });
   }
@@ -53,6 +55,17 @@ export const getPendingNews = async (req: AuthRequest, res: Response) => {
 export const getNewsById = async (req: Request, res: Response) => {
   try {
     const item = await newsService.getNewsById(Number(req.params.id));
+    if (!item) return res.status(404).json({ message: "News not found" });
+    res.json(item);
+  } catch (error: any) {
+    res.status(500).json({ error: error.message });
+  }
+};
+
+// 📘 Get Single News by ID
+export const getAllNews = async (req: Request, res: Response) => {
+  try {
+    const item = await newsService.getAllNewsCreated();
     if (!item) return res.status(404).json({ message: "News not found" });
     res.json(item);
   } catch (error: any) {

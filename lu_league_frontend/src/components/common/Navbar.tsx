@@ -1,7 +1,7 @@
+import { Menu } from "lucide-react"; // optional hamburger icon
 import { useState } from "react";
 import { Link, NavLink } from "react-router-dom";
-import Button  from "../ui/button"; // Shadcn UI button
-import { Menu } from "lucide-react"; // optional hamburger icon
+import Button from "../ui/button"; // Shadcn UI button
 
 export const Navbar = () => {
   const [open, setOpen] = useState(false);
@@ -13,7 +13,6 @@ export const Navbar = () => {
     { name: "Players", path: "/players" },
     { name: "Matches", path: "/matches" },
     { name: "News", path: "/news" },
-    { name: "cloudinary", path: "/cloudinary"},
     { name: "Login", path: "/login" },
     { name: "Register", path: "/register" },
   ];
@@ -34,9 +33,7 @@ export const Navbar = () => {
                 key={link.name}
                 to={link.path}
                 className={({ isActive }) =>
-                  isActive
-                    ? "text-blue-600 font-semibold"
-                    : "text-gray-700 hover:text-blue-500"
+                  isActive ? "text-blue-600 font-semibold" : "text-gray-700 hover:text-blue-500"
                 }
               >
                 {link.name}
